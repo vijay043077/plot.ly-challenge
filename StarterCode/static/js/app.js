@@ -1,3 +1,5 @@
+// create function to read in json and assign variables using filter, slice and map
+
 function samplePlot(id) {
 
     d3.json("samples.json").then(function (response) {
@@ -31,6 +33,7 @@ function samplePlot(id) {
         console.log(`OTU ID: ${otu_ids}`);
         console.log(`OTU_labels: ${otu_labels}`);
 
+        // hbar chart 
         const trace1 = {
             x: topTen_values.reverse(),
             y: displayLabels.reverse(),
@@ -53,9 +56,39 @@ function samplePlot(id) {
 
         Plotly.newPlot("bar", data, layout);
 
+        // bubble chart
+        const trace2 = {
+            x: otu_ids,
+            y: sample_values,
+            mode: "markers",
+            marker: {
+                size: sample_values,
+                color: otu_ids,
+                text: otu_labels,
+            }
+        };
+
+        const data2 = [trace2];
+
+        const layout2 = {
+            title: "OTU Samples",
+            xaxis: {
+                title: "OTU IDs"
+            },
+            yaxis: {
+                title: "Sample Values"
+            },
+            showlegend: false,
+            heigh: 600,
+            width: 1000
+        };
+
+        Plotly.newPlot("bubble", data2, layout2);
+
     });
 }
 
+// dropdown selector
 let dropDown = d3.select("#selDataset")
 d3.json("samples.json").then(function (response) {
     let names = response.names;
@@ -65,8 +98,11 @@ d3.json("samples.json").then(function (response) {
 
     });
 });
+
+// default id open browser
 samplePlot(940);
 
+// HTMLselectelement.onchange
 function optionChanged(value) {
     samplePlot(value)
 }
