@@ -88,6 +88,16 @@ function samplePlot(id) {
     });
 }
 
+// default plot and metadata id open browser
+samplePlot(940);
+metaData(940);
+
+// HTMLselectelement.onchange
+function optionChanged(value) {
+    samplePlot(value);
+    metaData(value);
+}
+
 // dropdown selector
 let dropDown = d3.select("#selDataset")
 d3.json("samples.json").then(function (response) {
@@ -97,12 +107,23 @@ d3.json("samples.json").then(function (response) {
         dropDown.append("option").text(name).property("value", name);
 
     });
-});
+})
 
-// default id open browser
-samplePlot(940);
+// display sample metadata with each key-value pair using Object.entries
+function metaData(value) {
+    let demo = d3.select("#sample-metadata");
+    d3.json("samples.json").then(function (response) {
 
-// HTMLselectelement.onchange
-function optionChanged(value) {
-    samplePlot(value)
+        let metadata = response.metadata;
+
+        let metadata_samples = metadata.filter(metadata => metadata.id == value)[0];
+        // check filter
+        console.log(metadata_samples);
+        // clear existing html metadata and replace on 'optionChanged'
+        demo.html("")
+        Object.entries(metadata_samples).forEach(([key, value]) => {
+            demo.append("h6").text(`${key}: ${value}`);
+
+        });
+    })
 }
